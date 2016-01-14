@@ -15,8 +15,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        siplayer.cpp \
-    myplayer.cpp
+    myplayer.cpp \
+    siplayer.cpp \
+    mediafilemanager.cpp
 
-HEADERS  += siplayer.h \
-    myplayer.h
+HEADERS  += \
+    myplayer.h \
+    siplayer.h \
+    mediafilemanager.h

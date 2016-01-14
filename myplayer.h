@@ -25,9 +25,14 @@ public:
     void setPlayingFile(const QString &fileName);
     void forwardOneMinute();
     void backOneMinute();
-    qint64 curPlayTime();
     QString curPlayFile();
     MyPlayer::State state();
+
+    void setVideoOutput(QVideoWidget * output);
+
+public slots:
+    void setState(QMediaPlayer::State state);
+
 signals:
     void curFileFinish();
     void playedTimeChange(qint64 time);
@@ -35,6 +40,7 @@ signals:
 private:
     QMediaPlayer player;
     MyPlayer::State curState;
+    QString curPlayingFileName;
 
 };
 
