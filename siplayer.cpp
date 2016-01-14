@@ -35,10 +35,10 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
             player.backOneMinute();
             break;
         case Qt::Key_Up:
-            player.setPlayingFile("C:/Users/Public/Videos/Sample Videos/testPlayer1.mp4");
+            playPrevFile();
             break;
         case Qt::Key_Down:
-            player.setPlayingFile("C:/Users/Public/Videos/Sample Videos/testPlayer2.mp4");
+            playNextFile();
             break;
         case Qt::Key_Q:
             this->close();
@@ -57,4 +57,9 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
 void SiPlayer::playNextFile()
 {
     player.setPlayingFile(fileManager.getNextFileName());
+}
+
+void SiPlayer::playPrevFile()
+{
+    player.setPlayingFile(fileManager.getPrevFileName());
 }

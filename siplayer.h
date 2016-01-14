@@ -18,6 +18,7 @@ public:
 
 public slots:
     void playNextFile();
+    void playPrevFile();
 
 
 private:
