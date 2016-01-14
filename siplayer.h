@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "myplayer.h"
+#include "mediafilemanager.h"
 
 class SiPlayer : public QVideoWidget
 {
@@ -15,9 +16,13 @@ public:
     explicit SiPlayer(QVideoWidget *parent = 0);
     ~SiPlayer();
 
+public slots:
+    void playNextFile();
+
 
 private:
     MyPlayer player;                //播放器
+    MediaFileManager fileManager;   //文件管理
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;

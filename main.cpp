@@ -1,6 +1,8 @@
 #include "siplayer.h"
 #include <QApplication>
 
+#include "myxml.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -9,6 +11,7 @@ int main(int argc, char *argv[])
     siplayer.setFixedSize(800,600);
 
     siplayer.show();
+
 
     return a.exec();
 }

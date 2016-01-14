@@ -74,6 +74,7 @@ void MyPlayer::setState(QMediaPlayer::State state)
         break;
     case QMediaPlayer::StoppedState:
         curState = STOP_STATE;
+        emit curFileFinish();
         break;
     default:
         break;

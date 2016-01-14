@@ -7,6 +7,7 @@
 QT       += core gui
 QT       += multimedia
 QT       += multimediawidgets
+QT       += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,9 +18,11 @@ TEMPLATE = app
 SOURCES += main.cpp\
     myplayer.cpp \
     siplayer.cpp \
-    mediafilemanager.cpp
+    mediafilemanager.cpp \
+    myxml.cpp
 
 HEADERS  += \
     myplayer.h \
     siplayer.h \
-    mediafilemanager.h
+    mediafilemanager.h \
+    myxml.h

@@ -15,6 +15,8 @@ SiPlayer::SiPlayer(QVideoWidget *parent)
 
     player.setVideoOutput(this);
     player.setPlayingFile("C:/Users/Public/Videos/Sample Videos/Wildlife.wmv");
+
+    connect(&player, SIGNAL(curFileFinish()),this,SLOT(playNextFile()));
 }
 
 SiPlayer::~SiPlayer()
@@ -50,4 +52,9 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
             QVideoWidget::keyPressEvent(event);
             break;
     }
+}
+
+void SiPlayer::playNextFile()
+{
+    player.setPlayingFile(fileManager.getNextFileName());
 }
