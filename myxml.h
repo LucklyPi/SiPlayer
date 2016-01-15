@@ -24,10 +24,10 @@ public:
 
     void saveXMLtoFile();
     void addElement(FileElement element);
-    FileElement getElement(QString fileName);
+    bool getElement(QString fileName, FileElement *element = 0);
     void removeElement(QString fileName);
     void replaceElement(FileElement element);
-    QStringList getFileList();
+    void getFileList(QStringList *fileList);
 
 private:
     void creatXML();

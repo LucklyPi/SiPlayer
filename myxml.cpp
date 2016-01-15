@@ -6,6 +6,7 @@
 #include <QDomText>
 #include <QTextStream>
 #include <QFileInfo>
+#include <QDomNodeList>
 
 #include <QDebug>
 
@@ -79,7 +80,6 @@ void MyXML::loadXML()
        file.remove();
        creatXML();
     }
-    qDebug()<<"root.text() = "<<root.text();
 }
 
 void MyXML::saveXMLtoFile()
@@ -95,16 +95,18 @@ void MyXML::saveXMLtoFile()
 
 void MyXML::addElement(FileElement element)
 {
+    if(getElement(element.fileName,NULL))
+        return;
     QDomElement newElement = doc.createElement("file");
     newElement.setAttribute("name", element.fileName);
 
     QDomElement position = doc.createElement("lastposition");
-    QDomText t = doc.createTextNode(QString()+element.lastPosition);
+    QDomText t = doc.createTextNode("0");
     position.appendChild(t);
     newElement.appendChild(position);
 
     QDomElement playtime = doc.createElement("lastplaytime");
-    t = doc.createTextNode(QString()+element.lastPlayTime);
+    t = doc.createTextNode("0");
     playtime.appendChild(t);
     newElement.appendChild(playtime);
 
@@ -113,9 +115,32 @@ void MyXML::addElement(FileElement element)
 
 }
 
-FileElement MyXML::getElement(QString fileName)
+bool MyXML::getElement(QString fileName, FileElement *element)
 {
+    if (fileName.isEmpty())
+        return false;
+    QDomElement filelist = doc.firstChildElement("filelist");
+    QDomElement elt = filelist.firstChildElement("file");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
+        if (elt.attribute("name") == fileName) {
+            if (element) {
+                element->fileName = fileName;
+                QDomElement lastPosition = elt.firstChildElement("lastposition");
+                if(lastPosition.isNull())
+                    element->lastPosition = 0;
+                else
+                    element->lastPosition = lastPosition.text().toLong();
 
+                QDomElement lastPlayTime = elt.firstChildElement("lastposition");
+                if(lastPlayTime.isNull())
+                    element->lastPlayTime = 0;
+                else
+                    element->lastPlayTime = lastPlayTime.text().toLong();
+            }
+            return true;
+        }
+    }
+    return false;
 }
 
 void MyXML::removeElement(QString fileName)
@@ -128,9 +153,13 @@ void MyXML::replaceElement(FileElement element)
 
 }
 
-QStringList MyXML::getFileList()
+void MyXML::getFileList(QStringList *fileList)
 {
-
+    QDomElement filelist = doc.firstChildElement("filelist");
+    QDomElement elt = filelist.firstChildElement("file");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
+        fileList->append(elt.attribute("name"));
+    }
 }
 
 
