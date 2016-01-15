@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QStringList>
 
 class MediaFileManager : public QObject
 {
@@ -16,7 +17,7 @@ public:
 
 private:
 
-    QList<QString> fileList;
+    QStringList fileList;
     int curFileIndex;
 
 

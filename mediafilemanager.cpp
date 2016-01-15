@@ -1,14 +1,18 @@
 #include "mediafilemanager.h"
 
 #include <QDebug>
+#include <QDir>
+
 MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
 {
-    fileList<<"F:/Media/尘__金志文.mp4";
-    fileList<<"F:/Media/第一次爱的人_王心凌.mp4";
-    fileList<<"F:/Media/蜉蝣_华晨宇.mp4";
-    fileList<<"F:/Media/一个人的日子_王心凌.mp4";
-    fileList<<"F:/Media/永不放弃_大张伟.mp4";
-    curFileIndex = 0;
+    QDir dir("F:/Media");
+    fileList = dir.entryList(QDir::Files,QDir::Name);
+    for(int i = 0; i < fileList.size(); i++)
+    {
+        fileList.replace(i,"F:/Media/"+fileList.at(i));
+        qDebug()<<fileList.at(i);
+    }
+    curFileIndex = -1;
 }
 
 MediaFileManager::~MediaFileManager()
