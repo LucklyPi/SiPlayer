@@ -5,6 +5,8 @@
 #include <QList>
 #include <QStringList>
 
+#include "myxml.h"
+
 class MediaFileManager : public QObject
 {
     Q_OBJECT
@@ -19,6 +21,7 @@ private:
 
     QStringList fileList;
     int curFileIndex;
+    MyXML *xml;
 
 
 };

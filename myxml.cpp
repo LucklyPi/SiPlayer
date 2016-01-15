@@ -14,7 +14,7 @@ MyXML::MyXML()
 
 }
 
-MyXML::MyXML(const QString fileNmae)
+MyXML::MyXML(QString fileNmae)
 {
     if(fileNmae.isEmpty())
         return;
@@ -47,10 +47,7 @@ void MyXML::creatXML()
 
     QDomElement root = doc.createElement("filelist");
     doc.appendChild(root);
-    QDomText text = doc.createTextNode("\n");
-    root.appendChild(text);
 
-    root.appendChild(text);
     QTextStream out(&file);
     doc.save(out,4);
 
@@ -84,6 +81,59 @@ void MyXML::loadXML()
     }
     qDebug()<<"root.text() = "<<root.text();
 }
+
+void MyXML::saveXMLtoFile()
+{
+    if(saveFileName.isEmpty())
+        return;
+    QFile file(saveFileName);
+    file.open(QIODevice::ReadWrite);
+    QTextStream out(&file);
+    doc.save(out,4);
+    file.close();
+}
+
+void MyXML::addElement(FileElement element)
+{
+    QDomElement newElement = doc.createElement("file");
+    newElement.setAttribute("name", element.fileName);
+
+    QDomElement position = doc.createElement("lastposition");
+    QDomText t = doc.createTextNode(QString()+element.lastPosition);
+    position.appendChild(t);
+    newElement.appendChild(position);
+
+    QDomElement playtime = doc.createElement("lastplaytime");
+    t = doc.createTextNode(QString()+element.lastPlayTime);
+    playtime.appendChild(t);
+    newElement.appendChild(playtime);
+
+    QDomElement root = doc.documentElement();
+    root.appendChild(newElement);
+
+}
+
+FileElement MyXML::getElement(QString fileName)
+{
+
+}
+
+void MyXML::removeElement(QString fileName)
+{
+
+}
+
+void MyXML::replaceElement(FileElement element)
+{
+
+}
+
+QStringList MyXML::getFileList()
+{
+
+}
+
+
 
 
 
