@@ -39,9 +39,13 @@ void MyPlayer::setPlayingFile(const QString &fileName)
 
 void MyPlayer::forwardOneMinute()
 {
+    //最后一秒不必快进了，这样可以防止重发curFileFinish消息
+    if(player.position()+1000 >= player.duration())
+        return;
+    //剩余时间不足一分钟，直接停止播放，并发送curFileFinish消息
     if(player.position()+60000 >= player.duration())
     {
-        player.stop(); //可能引发重复上报消息
+        player.stop();
         emit curFileFinish();
     }
     else
@@ -80,7 +84,6 @@ void MyPlayer::setState(QMediaPlayer::State state)
         break;
     case QMediaPlayer::StoppedState:
         curState = STOP_STATE;
-        qDebug()<<"emit curFileFinish()" ; //这个地方可以放在播放时间改变的消息上吗
         if(player.position() >= player.duration())
             emit curFileFinish();
         break;

@@ -13,9 +13,11 @@ SiPlayer::SiPlayer(QVideoWidget *parent)
     palette.setColor(QPalette::Background, Qt::black);
     this->setPalette(palette);
 
+    //设置播放器属性
     player.setVideoOutput(this);
     player.setPlayingFile("C:/Users/Public/Videos/Sample Videos/Wildlife.wmv");
 
+    //信号连接
     connect(&player, SIGNAL(curFileFinish()),this,SLOT(playNextFile()));
 }
 
