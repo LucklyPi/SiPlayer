@@ -86,7 +86,9 @@ void MyXML::saveXMLtoFile()
 {
     if(saveFileName.isEmpty())
         return;
+    qDebug()<<"call saveXMLtoFile";
     QFile file(saveFileName);
+    file.resize(0);
     file.open(QIODevice::ReadWrite);
     QTextStream out(&file);
     doc.save(out,4);
@@ -101,12 +103,12 @@ void MyXML::addElement(FileElement element)
     newElement.setAttribute("name", element.fileName);
 
     QDomElement position = doc.createElement("lastposition");
-    QDomText t = doc.createTextNode("0");
+    QDomText t = doc.createTextNode(QString::number(element.lastPosition));
     position.appendChild(t);
     newElement.appendChild(position);
 
     QDomElement playtime = doc.createElement("lastplaytime");
-    t = doc.createTextNode("0");
+    t = doc.createTextNode(QString::number(element.lastPlayTime));
     playtime.appendChild(t);
     newElement.appendChild(playtime);
 
@@ -145,12 +147,39 @@ bool MyXML::getElement(QString fileName, FileElement *element)
 
 void MyXML::removeElement(QString fileName)
 {
-
+    if (fileName.isEmpty())
+        return;
+    QDomElement filelist = doc.firstChildElement("filelist");
+    QDomElement elt = filelist.firstChildElement("file");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
+        if (elt.attribute("name") == fileName) {
+            filelist.removeChild(elt);
+        }
+    }
 }
 
 void MyXML::replaceElement(FileElement element)
 {
+    QDomElement newElement = doc.createElement("file");
+    newElement.setAttribute("name", element.fileName);
 
+    QDomElement position = doc.createElement("lastposition");
+    QDomText t = doc.createTextNode(QString::number(element.lastPosition));
+    position.appendChild(t);
+    newElement.appendChild(position);
+
+    QDomElement playtime = doc.createElement("lastplaytime");
+    t = doc.createTextNode(QString::number(element.lastPlayTime));
+    playtime.appendChild(t);
+    newElement.appendChild(playtime);
+
+    QDomElement filelist = doc.firstChildElement("filelist");
+    QDomElement elt = filelist.firstChildElement("file");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
+        if (elt.attribute("name") == element.fileName) {
+            filelist.replaceChild(newElement,elt);
+        }
+    }
 }
 
 void MyXML::getFileList(QStringList *fileList)
@@ -161,8 +190,3 @@ void MyXML::getFileList(QStringList *fileList)
         fileList->append(elt.attribute("name"));
     }
 }
-
-
-
-
-

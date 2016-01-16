@@ -16,12 +16,21 @@ public:
 
     QString getNextFileName();
     QString getPrevFileName();
+    qint64  getPlayedTime(QString fileName);
+
+public slots:
+    void dealPlayedTimeChange(QString fileName, qint64 time);
 
 private:
 
+    //是否真的需要一个fileList,可不可以由xml中的doc代替
     QStringList fileList;
     int curFileIndex;
     MyXML *xml;
+    int saveTimerId;
+
+protected:
+    void timerEvent(QTimerEvent *) Q_DECL_OVERRIDE;
 
 
 };

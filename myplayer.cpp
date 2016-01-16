@@ -6,6 +6,7 @@ MyPlayer::MyPlayer(QObject *parent) : QObject(parent)
 {
     curState = MyPlayer::STOP_STATE;
     connect(&player,SIGNAL(stateChanged(QMediaPlayer::State)),this,SLOT(setState(QMediaPlayer::State)));
+    connect(&player,SIGNAL(positionChanged(qint64)),this,SLOT(setPlayedTime(qint64)));
 }
 
 MyPlayer::~MyPlayer()
@@ -28,12 +29,13 @@ void MyPlayer::stop()
     player.stop();
 }
 
-void MyPlayer::setPlayingFile(const QString &fileName)
+void MyPlayer::setPlayingFile(const QString &fileName, qint64 playedTime)
 {
     if(fileName == curPlayingFileName)
         return;
     curPlayingFileName = fileName;
     player.setMedia(QUrl::fromLocalFile(fileName));
+    player.setPosition(playedTime);
     player.play();
 }
 
@@ -46,6 +48,7 @@ void MyPlayer::forwardOneMinute()
     if(player.position()+60000 >= player.duration())
     {
         player.stop();
+        emit playedTimeChange(curPlayingFileName, 0);
         emit curFileFinish();
     }
     else
@@ -84,12 +87,19 @@ void MyPlayer::setState(QMediaPlayer::State state)
         break;
     case QMediaPlayer::StoppedState:
         curState = STOP_STATE;
-        if(player.position() >= player.duration())
+        if (player.position() >= player.duration()) {
+            emit playedTimeChange(curPlayingFileName, 0);
             emit curFileFinish();
+        }
         break;
     default:
         break;
     }
+}
+
+void MyPlayer::setPlayedTime(qint64 time)
+{
+    emit playedTimeChange(curPlayingFileName, time);
 }
 
 

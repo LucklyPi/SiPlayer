@@ -22,7 +22,7 @@ public:
     void play();
     void pause();
     void stop();
-    void setPlayingFile(const QString &fileName);
+    void setPlayingFile(const QString &fileName, qint64 playedTime = 0);
     void forwardOneMinute();
     void backOneMinute();
     QString curPlayFile();
@@ -32,10 +32,11 @@ public:
 
 public slots:
     void setState(QMediaPlayer::State state);
+    void setPlayedTime(qint64 time);
 
 signals:
     void curFileFinish();
-    void playedTimeChange(qint64 time);
+    void playedTimeChange(QString fileName, qint64 time);
 
 private:
     QMediaPlayer player;

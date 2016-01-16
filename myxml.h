@@ -10,8 +10,8 @@
 struct FileElement
 {
     QString fileName;
-    qint64    lastPosition;
-    qint64    lastPlayTime;
+    long    lastPosition;
+    long    lastPlayTime;
 };
 
 
