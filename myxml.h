@@ -9,16 +9,15 @@
 
 struct FileElement
 {
-    QString fileName;
-    long    lastPosition;
-    long    lastPlayTime;
+    QString fileName;       //文件名
+    qint64  lastPosition;   //上一次播放的位置
+    int     fileClass;      //文件的类别
 };
 
 
 class MyXML
 {
 public:
-    MyXML();
     MyXML(QString fileNmae);
     ~MyXML();
 
@@ -27,7 +26,7 @@ public:
     bool getElement(QString fileName, FileElement *element = 0);
     void removeElement(QString fileName);
     void replaceElement(FileElement element);
-    void getFileList(QStringList *fileList);
+    QStringList getFileList();
 
 private:
     void creatXML();

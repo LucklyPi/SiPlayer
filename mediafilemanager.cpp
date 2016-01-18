@@ -8,8 +8,7 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
 {
     xml = new MyXML("F:/Media/filelist.xml");
 
-    QStringList xmlFileList;
-    xml->getFileList(&xmlFileList);
+    QStringList xmlFileList = xml->getFileList();
     for (int i = 0; i < xmlFileList.size(); ++i) {
         QFileInfo checkFile(xmlFileList.at(i));
         if (!checkFile.exists() || !checkFile.isFile()) {
@@ -25,14 +24,14 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
         dirFileList.replace(i,"F:/Media/"+dirFileList.at(i));
         if (!xml->getElement(dirFileList.at(i))) {
             FileElement element;
-            element.lastPlayTime = 0;
+            element.fileClass = 0;
             element.lastPosition = 0;
             element.fileName = dirFileList.at(i);
             xml->addElement(element);
         }
     }
 
-    xml->getFileList(&fileList);
+    fileList = xml->getFileList();;
     xml->saveXMLtoFile();
     saveTimerId = startTimer(30000);
     curFileIndex = -1;
@@ -81,7 +80,7 @@ qint64 MediaFileManager::getPlayedTime(QString fileName)
 void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)
 {
     FileElement element;
-    element.lastPlayTime = 0;
+    element.fileClass = 0;
     element.lastPosition = time;
     element.fileName = fileName;
     xml->replaceElement(element);
