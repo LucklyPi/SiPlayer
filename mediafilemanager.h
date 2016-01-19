@@ -17,9 +17,11 @@ public:
     QString getNextFileName();
     QString getPrevFileName();
     qint64  getPlayedTime(QString fileName);
+    void    save();
 
 public slots:
     void dealPlayedTimeChange(QString fileName, qint64 time);
+    void dealFileError(QString fileName);
 
 private:
 

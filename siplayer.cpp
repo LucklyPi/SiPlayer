@@ -20,6 +20,7 @@ SiPlayer::SiPlayer(QVideoWidget *parent)
     //信号连接
     connect(&player, SIGNAL(curFileFinish()),this,SLOT(playNextFile()));
     connect(&player,SIGNAL(playedTimeChange(QString,qint64)),&fileManager,SLOT(dealPlayedTimeChange(QString,qint64)));
+    connect(&player,SIGNAL(playFileError(QString)),&fileManager,SLOT(dealFileError(QString)));
 }
 
 SiPlayer::~SiPlayer()
@@ -59,8 +60,12 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
 
 void SiPlayer::playNextFile()
 {
-    QString fileName = fileManager.getNextFileName();
-    qint64  playedTime = fileManager.getPlayedTime(fileName);
+    QString fileName;
+    qint64  playedTime = 0;
+    do {
+        fileName = fileManager.getNextFileName();
+        playedTime = fileManager.getPlayedTime(fileName);
+    }while(playedTime < 0);
     if (fileName.isEmpty())
         player.play();
     else
@@ -69,12 +74,23 @@ void SiPlayer::playNextFile()
 
 void SiPlayer::playPrevFile()
 {
-    QString fileName = fileManager.getPrevFileName();
-    qint64  playedTime = fileManager.getPlayedTime(fileName);
+    QString fileName;
+    qint64  playedTime = 0;
+    do {
+        fileName = fileManager.getPrevFileName();
+        playedTime = fileManager.getPlayedTime(fileName);
+        qDebug()<< fileName <<"  playedTime = "<<playedTime;
+    }while(playedTime < 0);
     if (fileName.isEmpty())
         player.play();
     else
         player.setPlayingFile(fileName, playedTime);
+}
+
+void SiPlayer::closeEvent(QCloseEvent *event)
+{
+    fileManager.save();
+    QVideoWidget::closeEvent(event);
 }
 
 

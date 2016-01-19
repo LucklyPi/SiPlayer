@@ -33,10 +33,12 @@ public:
 public slots:
     void setState(QMediaPlayer::State state);
     void setPlayedTime(qint64 time);
+    void dealError(QMediaPlayer::Error error);
 
 signals:
     void curFileFinish();
     void playedTimeChange(QString fileName, qint64 time);
+    void playFileError(QString fileName);
 
 private:
     QMediaPlayer player;

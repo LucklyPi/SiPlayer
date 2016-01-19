@@ -31,9 +31,8 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
         }
     }
 
-    fileList = xml->getFileList();;
-    xml->saveXMLtoFile();
-    saveTimerId = startTimer(30000);
+    fileList = xml->getFileList();
+    saveTimerId = startTimer(60000);
     curFileIndex = -1;
 }
 
@@ -46,6 +45,7 @@ MediaFileManager::~MediaFileManager()
 
 void MediaFileManager::timerEvent(QTimerEvent *)
 {
+    //每隔1分钟保存到文件一次
     xml->saveXMLtoFile();
 }
 
@@ -77,15 +77,30 @@ qint64 MediaFileManager::getPlayedTime(QString fileName)
         return 0;
 }
 
+void MediaFileManager::save()
+{
+    xml->saveXMLtoFile();
+}
+
 void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)
 {
     FileElement element;
-    element.fileClass = 0;
+    xml->getElement(fileName,&element);
+    if(element.lastPosition < 0)
+        return;
     element.lastPosition = time;
     element.fileName = fileName;
     xml->replaceElement(element);
-
-    if(time == 0)
-        xml->saveXMLtoFile();
 }
+
+void MediaFileManager::dealFileError(QString fileName)
+{
+    qDebug()<<"dealFileError fileName = " << fileName;
+    FileElement element;
+    xml->getElement(fileName,&element);
+    element.lastPosition = -1;
+    element.fileName = fileName;
+    xml->replaceElement(element);
+}
+
 

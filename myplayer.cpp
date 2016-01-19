@@ -1,5 +1,4 @@
 #include "myplayer.h"
-
 #include <Qurl>
 
 MyPlayer::MyPlayer(QObject *parent) : QObject(parent)
@@ -7,6 +6,7 @@ MyPlayer::MyPlayer(QObject *parent) : QObject(parent)
     curState = MyPlayer::STOP_STATE;
     connect(&player,SIGNAL(stateChanged(QMediaPlayer::State)),this,SLOT(setState(QMediaPlayer::State)));
     connect(&player,SIGNAL(positionChanged(qint64)),this,SLOT(setPlayedTime(qint64)));
+    connect(&player,SIGNAL(error(QMediaPlayer::Error)),this,SLOT(dealError(QMediaPlayer::Error)));
 }
 
 MyPlayer::~MyPlayer()
@@ -100,6 +100,13 @@ void MyPlayer::setState(QMediaPlayer::State state)
 void MyPlayer::setPlayedTime(qint64 time)
 {
     emit playedTimeChange(curPlayingFileName, time);
+}
+
+void MyPlayer::dealError(QMediaPlayer::Error error)
+{
+    qDebug()<<"error = "<<error;
+    if(error != QMediaPlayer::NoError)
+        emit playFileError(curPlayingFileName);
 }
 
 
