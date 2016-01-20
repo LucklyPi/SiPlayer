@@ -75,7 +75,7 @@ void MyXML::loadXML()
     }
 }
 
-void MyXML::saveXMLtoFile()
+void MyXML::save()
 {
     if(saveFileName.isEmpty())
         return;
@@ -93,17 +93,11 @@ void MyXML::addElement(FileElement element)
     if(getElement(element.fileName,NULL))
         return;
     QDomElement newElement = doc.createElement("file");
+    newElement.setAttribute("fileclase", element.fileClass);
     newElement.setAttribute("lastposition", element.lastPosition);
     newElement.setAttribute("name", element.fileName);
-
-    QDomElement fileClase = doc.createElement("fileclase");
-    QDomText t = doc.createTextNode(QString::number(element.fileClass));
-    fileClase.appendChild(t);
-    newElement.appendChild(fileClase);
-
     QDomElement filelist = doc.firstChildElement("filelist");
     filelist.appendChild(newElement);
-
 }
 
 bool MyXML::getElement(QString fileName, FileElement *element)
@@ -115,9 +109,9 @@ bool MyXML::getElement(QString fileName, FileElement *element)
     for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
         if (elt.attribute("name") == fileName) {
             if (element) {
-                element->fileName = fileName;
-                element->lastPosition = elt.attribute("lastposition").toLong();
-                element->fileClass = elt.firstChildElement("lastposition").text().toInt();
+                element->fileName       = fileName;
+                element->lastPosition   = elt.attribute("lastposition").toLong();
+                element->fileClass      = elt.attribute("fileclase").toInt();
             }
             return true;
         }
@@ -141,13 +135,9 @@ void MyXML::removeElement(QString fileName)
 void MyXML::replaceElement(FileElement element)
 {
     QDomElement newElement = doc.createElement("file");
-    newElement.setAttribute("name", element.fileName);
+    newElement.setAttribute("fileclase", element.fileClass);
     newElement.setAttribute("lastposition", element.lastPosition);
-
-    QDomElement fileClase = doc.createElement("fileclase");
-    QDomText t = doc.createTextNode(QString::number(element.fileClass));
-    fileClase.appendChild(t);
-    newElement.appendChild(fileClase);
+    newElement.setAttribute("name", element.fileName);
 
     QDomElement filelist = doc.firstChildElement("filelist");
     QDomElement elt = filelist.firstChildElement("file");
@@ -158,13 +148,21 @@ void MyXML::replaceElement(FileElement element)
     }
 }
 
+/**
+ * @brief MyXML::getFileList 获取给定类别的所有文件的文件名列表
+ * @param fileCalss 给定的类别，取值在0到9之间
+ * @return 给定类别的所有文件的文件名列表
+ */
 QStringList MyXML::getFileList(int fileCalss)
 {
+    if(fileCalss < 0 || fileCalss > 9)
+        fileCalss = 0;
+
     QStringList fileList;
     QDomElement filelist = doc.firstChildElement("filelist");
     QDomElement elt = filelist.firstChildElement("file");
     for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        if(fileCalss == 0 || elt.firstChildElement("lastposition").text().toInt() == fileCalss)
+        if(fileCalss == 0 || elt.attribute("fileclase").toInt() == fileCalss)
             fileList.append(elt.attribute("name"));
     }
     return fileList;

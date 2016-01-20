@@ -16,25 +16,17 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
         }
     }
 
-    QDir dir("F:/Media");
-    QStringList nameFilters;
-    nameFilters<<"*.mp4";
-    nameFilters<<"*.flv";
-    QStringList dirFileList = dir.entryList(nameFilters, QDir::Files, QDir::Name);
+    QList<FileElement> dirFileList = getAllFileinMediaDir();
     for (int i = 0; i < dirFileList.size(); ++i) {
-        dirFileList.replace(i,"F:/Media/"+dirFileList.at(i));
-        if (!xml->getElement(dirFileList.at(i))) {
-            FileElement element;
-            element.fileClass = 0;
-            element.lastPosition = 0;
-            element.fileName = dirFileList.at(i);
-            xml->addElement(element);
+        if (!xml->getElement(dirFileList.at(i).fileName)) {
+            xml->addElement(dirFileList.at(i));
         }
     }
 
     fileList = xml->getFileList();
     saveTimerId = startTimer(60000);
     curFileIndex = -1;
+    curFileClass =  0;
 }
 
 
@@ -47,12 +39,12 @@ MediaFileManager::~MediaFileManager()
 void MediaFileManager::timerEvent(QTimerEvent *)
 {
     //每隔1分钟保存到文件一次
-    xml->saveXMLtoFile();
+    xml->save();
 }
 
 void MediaFileManager::save()
 {
-    xml->saveXMLtoFile();
+    xml->save();
 }
 
 QString MediaFileManager::getNextFileName()
@@ -83,20 +75,33 @@ qint64 MediaFileManager::getPlayedTime(QString fileName)
         return 0;
 }
 
-void MediaFileManager::setFileClass(int fileclass)
+void MediaFileManager::setFileClass(int fileClass)
 {
-    QStringList newList = xml->getFileList(fileclass);
+    if(curFileClass == fileClass)
+        return;
+    QStringList newList = xml->getFileList(fileClass);
     if(newList.isEmpty())
-        //设置的分类没有视频文件
-
-
-    if (!newList.contains(fileList.at(curFileIndex))) {
-        //发送切换视频的消息
-        curFileIndex = 0;
+        return;
+    if(curFileIndex >= 0 && curFileIndex < fileList.size()) {
+        int newIndex = newList.indexOf(fileList.at(curFileIndex));
+        if(newIndex < 0) {
+            emit changePlayingFile(newList.at(0),getPlayedTime(newList.at(0)));
+            curFileIndex = 0;
+        } else {
+            curFileIndex = newIndex;
+        }
+    } else {
+        curFileIndex = -1;
     }
+    curFileClass = fileClass;
     fileList = newList;
 }
 
+/**
+ * @brief MediaFileManager::dealPlayedTimeChange 处理播放器播放的时间改变的消息
+ * @param fileName  当前播放的文件
+ * @param time      播放的时间
+ */
 void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)
 {
     FileElement element;
@@ -108,14 +113,73 @@ void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)
     xml->replaceElement(element);
 }
 
+/**
+ * @brief MediaFileManager::dealFileError 处理播放器播放文件出错的消息
+ * @param fileName  出错的文件名
+ */
 void MediaFileManager::dealFileError(QString fileName)
 {
-    qDebug()<<"dealFileError fileName = " << fileName;
     FileElement element;
     xml->getElement(fileName,&element);
     element.lastPosition = -1;
     element.fileName = fileName;
     xml->replaceElement(element);
+}
+
+QStringList MediaFileManager::getAllFileinDir(QString dir)
+{
+    QStringList nameFilters;
+    nameFilters<<"*.mp4";
+    nameFilters<<"*.flv";
+    QDir qdir(dir);
+    QStringList allFile;
+
+    allFile = qdir.entryList(nameFilters, QDir::Files, QDir::Name);
+    for (int i = 0; i < allFile.size(); ++i) {
+        allFile.replace(i,dir + "/" + allFile.at(i));
+    }
+
+    QStringList dirList = qdir.entryList(QDir::Dirs, QDir::Name);
+    for(int i = 0; i < dirList.size(); ++i) {
+        if(dirList.at(i) == "." || dirList.at(i) == "..")
+            continue;
+        allFile.append(getAllFileinDir(dir + "/" + dirList.at(i)));
+    }
+
+    return allFile;
+}
+
+
+QList<FileElement> MediaFileManager::getAllFileinMediaDir()
+{
+    QStringList nameFilters;
+    nameFilters<<"*.mp4";
+    nameFilters<<"*.flv";
+    QDir dir("F:/Media/");
+    QList<FileElement> allFileinDir;
+    FileElement element;
+
+    QStringList dirFileList = dir.entryList(nameFilters, QDir::Files, QDir::Name);
+    for (int i = 0; i < dirFileList.size(); ++i) {
+        element.fileName = "F:/Media/"+dirFileList.at(i);
+        element.lastPosition = 0;
+        element.fileClass = 0;
+        allFileinDir.append(element);
+    }
+
+    QStringList dirList = dir.entryList(QDir::Dirs, QDir::Name);
+    for (int i = 0; i < dirList.size(); ++i) {
+        if(dirList.at(i) == "." || dirList.at(i) == "..")
+            continue;
+        QStringList allFileinClass = getAllFileinDir("F:/Media/" + dirList.at(i));
+        for (int j = 0; j < allFileinClass.size(); ++j) {
+            element.fileName = allFileinClass.at(j);
+            element.lastPosition = 0;
+            element.fileClass = dirList.at(i).toInt();
+            allFileinDir.append(element);
+        }
+    }
+    return allFileinDir;
 }
 
 
