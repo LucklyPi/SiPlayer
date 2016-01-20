@@ -29,8 +29,11 @@ public:
     void addElement(FileElement element);
     bool getElement(QString fileName, FileElement *element = 0);
     void removeElement(QString fileName);
-    void replaceElement(FileElement element);
+    bool replaceElement(FileElement element);
     QStringList getFileList(int fileCalss = 0);
+
+    void setLastFile(FileElement element);
+    QString getLastFile();
 
 private:
     void creatXML();

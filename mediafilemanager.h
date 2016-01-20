@@ -39,6 +39,7 @@ private:
     QStringList getAllFileinDir(QString dir);
 
     QStringList fileList;
+    QString lastFileName;
     int curFileIndex;
     int curFileClass;
     MyXML *xml;

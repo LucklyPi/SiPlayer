@@ -25,8 +25,13 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
 
     fileList = xml->getFileList();
     saveTimerId = startTimer(60000);
-    curFileIndex = -1;
+
+    lastFileName = xml->getLastFile();
+    curFileIndex = fileList.indexOf(lastFileName);
+    if(curFileIndex < 0)
+        lastFileName = "";
     curFileClass =  0;
+    qDebug()<<"lastFileName = "<<lastFileName;
 }
 
 
@@ -49,6 +54,10 @@ void MediaFileManager::save()
 
 QString MediaFileManager::getNextFileName()
 {
+    if(!lastFileName.isEmpty()) {
+        lastFileName = "";
+        return lastFileName;
+    }
     if(fileList.size() == 0)
         return QString();
     if(++curFileIndex >= fileList.size())
@@ -59,6 +68,10 @@ QString MediaFileManager::getNextFileName()
 
 QString MediaFileManager::getPrevFileName()
 {
+    if(!lastFileName.isEmpty()) {
+        lastFileName = "";
+        return lastFileName;
+    }
     if(fileList.size() == 0)
         return QString();
     if(--curFileIndex < 0)
@@ -110,7 +123,8 @@ void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)
         return;
     element.lastPosition = time;
     element.fileName = fileName;
-    xml->replaceElement(element);
+    if(xml->replaceElement(element))
+        xml->setLastFile(element);
 }
 
 /**
