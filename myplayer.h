@@ -23,7 +23,6 @@ public:
     void replay();
     void pause();
     void stop();
-    void setPlayingFile(const QString &fileName, qint64 playedTime = 0);
     void forwardOneMinute();
     void backOneMinute();
     QString curPlayFile();
@@ -35,6 +34,8 @@ public slots:
     void setState(QMediaPlayer::State state);
     void setPlayedTime(qint64 time);
     void dealError(QMediaPlayer::Error error);
+
+    void setPlayingFile(const QString &fileName, qint64 playedTime = 0);
 
 signals:
     void curFileFinish();

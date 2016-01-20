@@ -21,6 +21,7 @@ SiPlayer::SiPlayer(QVideoWidget *parent)
     connect(&player, SIGNAL(curFileFinish()),this,SLOT(playNextFile()));
     connect(&player,SIGNAL(playedTimeChange(QString,qint64)),&fileManager,SLOT(dealPlayedTimeChange(QString,qint64)));
     connect(&player,SIGNAL(playFileError(QString)),&fileManager,SLOT(dealFileError(QString)));
+    connect(&fileManager,SIGNAL(changePlayingFile(QString,qint64)),&player,SLOT(setPlayingFile(QString,qint64)));
 }
 
 SiPlayer::~SiPlayer()
@@ -68,6 +69,7 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
         case Qt::Key_7:
         case Qt::Key_8:
         case Qt::Key_9:
+            fileManager.setFileClass(event->key() - 0x30);
             break;
         default:
             QVideoWidget::keyPressEvent(event);

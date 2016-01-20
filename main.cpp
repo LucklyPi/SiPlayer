@@ -3,7 +3,6 @@
 
 #include "myxml.h"
 
-//实现分类机制
 //实现记录上一次最后一个播放的文件
 //添加配置类，使用INI文件记录配置
 //支持便于电视剧播放的机制，即按上下间切换整个文件夹内容
@@ -20,6 +19,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     SiPlayer siplayer;
     siplayer.setFixedSize(200,160);
-    siplayer.showFullScreen();
+    siplayer.show();
     return a.exec();
 }

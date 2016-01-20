@@ -14,6 +14,7 @@ struct FileElement
     int     fileClass;      //文件的类别
 };
 
+//查找方法还可以再做一些优化，记录上一次查到的结果，先于上一次的结果对比。
 
 class MyXML
 {
@@ -21,12 +22,18 @@ public:
     MyXML(QString fileNmae);
     ~MyXML();
 
-    void saveXMLtoFile();
+    //文件操作接口
+    void save();
+
+    //内容操作接口
     void addElement(FileElement element);
     bool getElement(QString fileName, FileElement *element = 0);
     void removeElement(QString fileName);
-    void replaceElement(FileElement element);
+    bool replaceElement(FileElement element);
     QStringList getFileList(int fileCalss = 0);
+
+    void setLastFile(FileElement element);
+    QString getLastFile();
 
 private:
     void creatXML();
