@@ -158,13 +158,14 @@ void MyXML::replaceElement(FileElement element)
     }
 }
 
-QStringList MyXML::getFileList()
+QStringList MyXML::getFileList(int fileCalss)
 {
     QStringList fileList;
     QDomElement filelist = doc.firstChildElement("filelist");
     QDomElement elt = filelist.firstChildElement("file");
     for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        fileList.append(elt.attribute("name"));
+        if(fileCalss == 0 || elt.firstChildElement("lastposition").text().toInt() == fileCalss)
+            fileList.append(elt.attribute("name"));
     }
     return fileList;
 }

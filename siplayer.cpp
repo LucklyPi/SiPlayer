@@ -57,6 +57,18 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
                 player.play();
             else if(player.state() == MyPlayer::PLAYING_STATE)
                 player.pause();
+            break;
+        case Qt::Key_0:
+        case Qt::Key_1:
+        case Qt::Key_2:
+        case Qt::Key_3:
+        case Qt::Key_4:
+        case Qt::Key_5:
+        case Qt::Key_6:
+        case Qt::Key_7:
+        case Qt::Key_8:
+        case Qt::Key_9:
+            break;
         default:
             QVideoWidget::keyPressEvent(event);
             break;
