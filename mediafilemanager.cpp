@@ -49,6 +49,11 @@ void MediaFileManager::timerEvent(QTimerEvent *)
     xml->saveXMLtoFile();
 }
 
+void MediaFileManager::save()
+{
+    xml->saveXMLtoFile();
+}
+
 QString MediaFileManager::getNextFileName()
 {
     if(fileList.size() == 0)
@@ -77,9 +82,18 @@ qint64 MediaFileManager::getPlayedTime(QString fileName)
         return 0;
 }
 
-void MediaFileManager::save()
+void MediaFileManager::setFileClass(int fileclass)
 {
-    xml->saveXMLtoFile();
+    QStringList newList = xml->getFileList(fileclass);
+    if(newList.isEmpty())
+        //设置的分类没有视频文件
+
+
+    if (!newList.contains(fileList.at(curFileIndex))) {
+        //发送切换视频的消息
+        curFileIndex = 0;
+    }
+    fileList = newList;
 }
 
 void MediaFileManager::dealPlayedTimeChange(QString fileName, qint64 time)

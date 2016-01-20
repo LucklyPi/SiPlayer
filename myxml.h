@@ -26,7 +26,7 @@ public:
     bool getElement(QString fileName, FileElement *element = 0);
     void removeElement(QString fileName);
     void replaceElement(FileElement element);
-    QStringList getFileList();
+    QStringList getFileList(int fileCalss = 0);
 
 private:
     void creatXML();

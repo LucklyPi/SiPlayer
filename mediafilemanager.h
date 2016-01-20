@@ -14,18 +14,18 @@ public:
     explicit MediaFileManager(QObject *parent = 0);
     ~MediaFileManager();
 
+    void    save();
     QString getNextFileName();
     QString getPrevFileName();
     qint64  getPlayedTime(QString fileName);
-    void    save();
+    void    setFileClass(int fileclass);
+
 
 public slots:
     void dealPlayedTimeChange(QString fileName, qint64 time);
     void dealFileError(QString fileName);
 
 private:
-
-    //是否真的需要一个fileList,可不可以由xml中的doc代替
     QStringList fileList;
     int curFileIndex;
     MyXML *xml;
