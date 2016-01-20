@@ -19,6 +19,7 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
     QDir dir("F:/Media");
     QStringList nameFilters;
     nameFilters<<"*.mp4";
+    nameFilters<<"*.flv";
     QStringList dirFileList = dir.entryList(nameFilters, QDir::Files, QDir::Name);
     for (int i = 0; i < dirFileList.size(); ++i) {
         dirFileList.replace(i,"F:/Media/"+dirFileList.at(i));

@@ -29,6 +29,12 @@ void MyPlayer::stop()
     player.stop();
 }
 
+void MyPlayer::replay()
+{
+    player.setPosition(0);
+    player.play();
+}
+
 void MyPlayer::setPlayingFile(const QString &fileName, qint64 playedTime)
 {
     if(fileName == curPlayingFileName)

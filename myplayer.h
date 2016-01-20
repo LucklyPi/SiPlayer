@@ -20,6 +20,7 @@ public:
     };
 
     void play();
+    void replay();
     void pause();
     void stop();
     void setPlayingFile(const QString &fileName, qint64 playedTime = 0);

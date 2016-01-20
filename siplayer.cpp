@@ -30,6 +30,8 @@ SiPlayer::~SiPlayer()
 
 void SiPlayer::keyPressEvent(QKeyEvent *event)
 {
+    qDebug()<<"event->key() = " <<hex<<event->key();
+
     switch(event->key())
     {
         case Qt::Key_Right:
@@ -37,6 +39,9 @@ void SiPlayer::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_Left:
             player.backOneMinute();
+            break;
+        case Qt::Key_Escape:
+            player.replay();
             break;
         case Qt::Key_Up:
             playPrevFile();
@@ -79,7 +84,6 @@ void SiPlayer::playPrevFile()
     do {
         fileName = fileManager.getPrevFileName();
         playedTime = fileManager.getPlayedTime(fileName);
-        qDebug()<< fileName <<"  playedTime = "<<playedTime;
     }while(playedTime < 0);
     if (fileName.isEmpty())
         player.play();
