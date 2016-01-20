@@ -36,9 +36,10 @@ void MyXML::creatXML()
     QDomProcessingInstruction instruction;
     instruction = doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"GB2312\"");
     doc.appendChild(instruction);
-    QDomElement root = doc.createElement("filelist");
-    doc.appendChild(root);
-    root = doc.createElement("LastFile");
+
+    QDomElement root = doc.createElement("FileManager");
+    root.appendChild(doc.createElement("FileList"));
+    root.appendChild(doc.createElement("LastPalyFile"));
     doc.appendChild(root);
 
     QFile file(saveFileName);
@@ -69,8 +70,8 @@ void MyXML::loadXML()
         return;
     }
     file.close();
-    QDomElement root = doc.firstChildElement("filelist");
-    if (root.isNull()) {
+    QDomElement root = doc.documentElement();
+    if (root.tagName() != "FileManager") {
        file.remove();
        doc.clear();
        creatXML();
@@ -94,11 +95,11 @@ void MyXML::addElement(FileElement element)
 {
     if(getElement(element.fileName,NULL))
         return;
-    QDomElement newElement = doc.createElement("file");
-    newElement.setAttribute("fileclase", element.fileClass);
-    newElement.setAttribute("lastposition", element.lastPosition);
-    newElement.setAttribute("name", element.fileName);
-    QDomElement filelist = doc.firstChildElement("filelist");
+    QDomElement newElement = doc.createElement("File");
+    newElement.setAttribute("Class", element.fileClass);
+    newElement.setAttribute("Position", element.lastPosition);
+    newElement.setAttribute("Name", element.fileName);
+    QDomElement filelist = doc.documentElement().firstChildElement("FileList");
     filelist.appendChild(newElement);
 }
 
@@ -106,14 +107,14 @@ bool MyXML::getElement(QString fileName, FileElement *element)
 {
     if (fileName.isEmpty())
         return false;
-    QDomElement filelist = doc.firstChildElement("filelist");
-    QDomElement elt = filelist.firstChildElement("file");
-    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        if (elt.attribute("name") == fileName) {
+    QDomElement filelist = doc.documentElement().firstChildElement("FileList");
+    QDomElement elt = filelist.firstChildElement("File");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("File")) {
+        if (elt.attribute("Name") == fileName) {
             if (element) {
                 element->fileName       = fileName;
-                element->lastPosition   = elt.attribute("lastposition").toLong();
-                element->fileClass      = elt.attribute("fileclase").toInt();
+                element->lastPosition   = elt.attribute("Position").toLong();
+                element->fileClass      = elt.attribute("Class").toInt();
             }
             return true;
         }
@@ -125,10 +126,10 @@ void MyXML::removeElement(QString fileName)
 {
     if (fileName.isEmpty())
         return;
-    QDomElement filelist = doc.firstChildElement("filelist");
-    QDomElement elt = filelist.firstChildElement("file");
-    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        if (elt.attribute("name") == fileName) {
+    QDomElement filelist = doc.documentElement().firstChildElement("FileList");
+    QDomElement elt = filelist.firstChildElement("File");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("File")) {
+        if (elt.attribute("Name") == fileName) {
             filelist.removeChild(elt);
         }
     }
@@ -136,11 +137,11 @@ void MyXML::removeElement(QString fileName)
 
 bool MyXML::replaceElement(FileElement element)
 {
-    QDomElement filelist = doc.firstChildElement("filelist");
-    QDomElement elt = filelist.firstChildElement("file");
-    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        if (elt.attribute("name") == element.fileName) {
-            elt.setAttribute("lastposition", element.lastPosition);
+    QDomElement filelist = doc.documentElement().firstChildElement("FileList");
+    QDomElement elt = filelist.firstChildElement("File");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("File")) {
+        if (elt.attribute("Name") == element.fileName) {
+            elt.setAttribute("Position", element.lastPosition);
             return true;
         }
     }
@@ -158,34 +159,34 @@ QStringList MyXML::getFileList(int fileCalss)
         fileCalss = 0;
 
     QStringList fileList;
-    QDomElement filelist = doc.firstChildElement("filelist");
-    QDomElement elt = filelist.firstChildElement("file");
-    for (; !elt.isNull(); elt = elt.nextSiblingElement("file")) {
-        if(fileCalss == 0 || elt.attribute("fileclase").toInt() == fileCalss)
-            fileList.append(elt.attribute("name"));
+    QDomElement filelist = doc.documentElement().firstChildElement("FileList");
+    QDomElement elt = filelist.firstChildElement("File");
+    for (; !elt.isNull(); elt = elt.nextSiblingElement("File")) {
+        if(fileCalss == 0 || elt.attribute("Class").toInt() == fileCalss)
+            fileList.append(elt.attribute("Name"));
     }
     return fileList;
 }
 
 void MyXML::setLastFile(FileElement element)
 {
-    QDomElement lastFile = doc.firstChildElement("LastFile");
+    QDomElement lastFile = doc.documentElement().firstChildElement("LastPalyFile");
     if(lastFile.isNull()) {
-        lastFile = doc.createElement("LastFile");
-        doc.appendChild(lastFile);
+        lastFile = doc.createElement("LastPalyFile");
+        doc.documentElement().appendChild(lastFile);
     }
-    lastFile.setAttribute("fileclase", element.fileClass);
-    lastFile.setAttribute("lastposition", element.lastPosition);
-    lastFile.setAttribute("name", element.fileName);
+    lastFile.setAttribute("Class", element.fileClass);
+    lastFile.setAttribute("Position", element.lastPosition);
+    lastFile.setAttribute("Name", element.fileName);
 }
 
 QString MyXML::getLastFile()
 {
-    QDomElement lastFile = doc.firstChildElement("LastFile");
+    QDomElement lastFile = doc.documentElement().firstChildElement("LastPalyFile");
     if(lastFile.isNull()) {
         return "";
     } else {
-        return lastFile.attribute("name");
+        return lastFile.attribute("Name");
     }
 }
 

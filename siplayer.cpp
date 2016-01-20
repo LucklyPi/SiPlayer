@@ -108,6 +108,10 @@ void SiPlayer::playPrevFile()
 void SiPlayer::closeEvent(QCloseEvent *event)
 {
     fileManager.save();
+    QFile file("F:/Media/test.txt");
+    file.open(QIODevice::ReadWrite);
+    file.write("test",4);
+    file.close();
     QVideoWidget::closeEvent(event);
 }
 

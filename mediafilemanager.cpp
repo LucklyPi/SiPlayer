@@ -24,14 +24,13 @@ MediaFileManager::MediaFileManager(QObject *parent) : QObject(parent)
     }
 
     fileList = xml->getFileList();
-    saveTimerId = startTimer(60000);
-
     lastFileName = xml->getLastFile();
     curFileIndex = fileList.indexOf(lastFileName);
     if(curFileIndex < 0)
         lastFileName = "";
     curFileClass =  0;
-    qDebug()<<"lastFileName = "<<lastFileName;
+
+    saveTimerId = startTimer(120000);
 }
 
 
@@ -43,7 +42,7 @@ MediaFileManager::~MediaFileManager()
 
 void MediaFileManager::timerEvent(QTimerEvent *)
 {
-    //每隔1分钟保存到文件一次
+    //每隔2分钟保存到文件一次
     xml->save();
 }
 
@@ -55,8 +54,9 @@ void MediaFileManager::save()
 QString MediaFileManager::getNextFileName()
 {
     if(!lastFileName.isEmpty()) {
+        QString lastFileNameTmp = lastFileName;
         lastFileName = "";
-        return lastFileName;
+        return lastFileNameTmp;
     }
     if(fileList.size() == 0)
         return QString();
@@ -69,8 +69,9 @@ QString MediaFileManager::getNextFileName()
 QString MediaFileManager::getPrevFileName()
 {
     if(!lastFileName.isEmpty()) {
+        QString lastFileNameTmp = lastFileName;
         lastFileName = "";
-        return lastFileName;
+        return lastFileNameTmp;
     }
     if(fileList.size() == 0)
         return QString();
