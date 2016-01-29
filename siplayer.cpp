@@ -1,9 +1,11 @@
-#include "siplayer.h"
-
 #include <QUrl>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QPalette>
+
+#include "siplayer.h"
+#include "config.h"
+
 
 SiPlayer::SiPlayer(QVideoWidget *parent)
     :QVideoWidget(parent)

@@ -19,10 +19,12 @@ SOURCES += main.cpp\
     myplayer.cpp \
     siplayer.cpp \
     mediafilemanager.cpp \
-    myxml.cpp
+    myxml.cpp \
+    config.cpp
 
 HEADERS  += \
     myplayer.h \
     siplayer.h \
     mediafilemanager.h \
-    myxml.h
+    myxml.h \
+    config.h

@@ -1,7 +1,6 @@
 #include "siplayer.h"
 #include <QApplication>
 
-#include "myxml.h"
 
 //添加配置类，使用INI文件记录配置
 //在视频暂停，和快进快退时，刚刚开始播放时显示文件名和播放进度。
